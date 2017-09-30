@@ -17,6 +17,8 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/exec"
+	"regexp"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -37,19 +39,37 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("Start gh\n\n")
+		url_byte, err := exec.Command("git", "config", "--get", "remote.origin.url").Output()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		url := string(url_byte)
+		fmt.Println(url)
+
+		r := regexp.MustCompile(`git@github.com:`)
+		if r.MatchString(url) {
+			url = r.ReplaceAllString(url, "https://github.com/")
+		}
+		fmt.Println(url)
+		exec.Command("open", url).Run()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
+		fmt.Printf("hello error\n")
+
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
-func init() { 
+func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
