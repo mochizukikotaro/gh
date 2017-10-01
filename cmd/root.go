@@ -19,6 +19,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strings"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -40,19 +41,62 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Start gh\n\n")
-		url_byte, err := exec.Command("git", "config", "--get", "remote.origin.url").Output()
+
+		// Inside work tree?
+		inside, err := exec.Command("git",
+																"rev-parse",
+																"--is-inside-work-tree").Output()
+		if err != nil || strings.TrimRight(string(inside), "\n") != "true" {
+			fmt.Println(err)
+			fmt.Println(string(inside))
+			fmt.Println("Not a git repository.")
+			fmt.Println("Please move to inside work tree.")
+			os.Exit(0)
+		}
+
+		// Get remote names
+		names, err := exec.Command("git",
+															 "remote").Output()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		url := string(url_byte)
-		fmt.Println(url)
+		names_str := strings.TrimRight(string(names), "\n")
+		name_arr := strings.Split(names_str, "\n")
 
+
+		// if length of name_arr == 1
+		length_names := len(name_arr)
+		remote_name := ""
+		if length_names != 1 {
+			fmt.Println("There are some remote names:")
+			fmt.Println("Use " + name_arr[0])
+
+			// TODO: ひとまずは、並び順が上のものを使う
+			// あとで、標準入力から選択できるようにしたい
+			remote_name = name_arr[0]
+
+		} else {
+			remote_name = name_arr[0]
+		}
+
+		url_byte, err := exec.Command("git",
+																	"config",
+																	"--get",
+																	"remote." + remote_name + ".url").Output()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		// Replace [git@github.com:] to [https://github.com/]
+		url := string(url_byte)
 		r := regexp.MustCompile(`git@github.com:`)
 		if r.MatchString(url) {
 			url = r.ReplaceAllString(url, "https://github.com/")
 		}
+
+		// Open url
 		fmt.Println(url)
 		exec.Command("open", url).Run()
 	},
