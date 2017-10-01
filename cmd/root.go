@@ -64,18 +64,19 @@ to quickly create a Cobra application.`,
 		names_str := strings.TrimRight(string(names), "\n")
 		name_arr := strings.Split(names_str, "\n")
 
-
 		// if length of name_arr == 1
 		length_names := len(name_arr)
 		remote_name := ""
 		if length_names != 1 {
-			fmt.Println("There are some remote names:")
-			fmt.Println("Use " + name_arr[0])
 
-			// TODO: ひとまずは、並び順が上のものを使う
+			// TODO: ひとまずは、upstream をいれる..
 			// あとで、標準入力から選択できるようにしたい
-			remote_name = name_arr[0]
-
+			// そのデータをどう保存していいかわからない
+			if len(args) == 1 {
+				remote_name = args[0]
+			} else {
+				remote_name = "upstream"
+			}
 		} else {
 			remote_name = name_arr[0]
 		}
@@ -85,8 +86,11 @@ to quickly create a Cobra application.`,
 																	"--get",
 																	"remote." + remote_name + ".url").Output()
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			fmt.Println("remote name '" + remote_name + "' does not exist.")
+			fmt.Println("Usage:")
+			fmt.Println("gh {remote_name}")
+			// fmt.Println(err)
+			os.Exit(0)
 		}
 
 		// Replace [git@github.com:] to [https://github.com/]
