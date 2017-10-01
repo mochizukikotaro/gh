@@ -1,24 +1,21 @@
-# gh
-
-# Get started
-
-- まずは go command をつくる
-- ついで、brew file を作成する
-- gh リポジトリを push しないと release が反映されない
-- os.Exit と return はどっちをつかえばいいの？
-- get go でいれたパッケージはどうやって削除するの？
-  - たとえば、gore の history とかはどうやって消すの？
-  - つまり設定ファイルの消し方を知りたい
-- git rev-parse --show-toplevel を使うか key に...
-
-
-# brew command
+# Usage
 
 ```bash
-$ brew info gh
+# Install
 $ brew tap mochizukikotaro/gh
-$ brew untap mochizukikotaro/gh
 $ brew install gh
-$ brew uninstall gh
-$ brew tap
+
+# Move to inside work tree
+$ cd ~/path_to_project
+
+# Go to GitHub page
+$ gh
+
+# If there are some remote names
+# ex)
+# $ git remote
+# upstream
+# origin
+$ gh #=> Go to upstream repository
+$ gh origin #=> Go to origin repository
 ```
