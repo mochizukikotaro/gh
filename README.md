@@ -1,6 +1,8 @@
 # mochizukikotaro/gh
 
-This command enable you to jump to GitHub page from terminal.
+gh is a command line tool implemented in Go.
+
+It enables you to jump to remote repository's GitHub page from terminal.
 
 ## Install via Homebrew
 
