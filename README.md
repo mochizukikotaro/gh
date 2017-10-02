@@ -1,6 +1,6 @@
 # mochizukikotaro/gh
 
-gh is a command line tool implemented in Go.
+`gh` is a command line tool implemented in Go.
 
 It enables you to jump to remote repository's GitHub page from terminal.
 
